@@ -6,6 +6,7 @@
     }
   },
   "routes": [
+  { "src": "/", "dest": "/index.html", "methods": ["GET"] },
   { "src": "/bfhl", "methods": ["POST"], "dest": "/api/bfhl.js" },
   { "src": "/bfhl", "methods": ["GET"], "dest": "/api/bfhl.js" }
   ]

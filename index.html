@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BFHL API Demo</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 2rem; line-height: 1.4; }
+      h1 { margin: 0 0 0.5rem; }
+      .card { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; max-width: 900px; }
+      label { display: block; font-weight: 600; margin-top: 0.75rem; }
+      input, textarea, select { width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #bbb; font-family: inherit; }
+      textarea { min-height: 72px; }
+      .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; }
+      .actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
+      button { padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid #888; cursor: pointer; background: #eee; }
+      pre { background: #111; color: #0f0; padding: 0.75rem; border-radius: 8px; overflow: auto; }
+      small.muted { color: #777; }
+      .pill { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: #eef; color: #224; display: inline-block; margin-left: 0.5rem; }
+    </style>
+  </head>
+  <body>
+    <h1>BFHL API Demo <span class="pill">POST /bfhl</span></h1>
+    <p class="card">
+      Try the API from your browser. Enter values and click Send. The app will POST to <code>/bfhl</code> on the same origin
+      (works locally and on Vercel). Numbers can be integers, letters become uppercase, and specials are extracted.
+    </p>
+
+    <div class="card">
+      <form id="bfhlForm">
+        <label for="data">Data (JSON array or comma-separated)</label>
+        <textarea id="data" name="data" placeholder='["a","1","334","4","R","$"]'>["a","1","334","4","R","$"]</textarea>
+
+        <div class="row">
+          <div>
+            <label for="full_name">Full Name</label>
+            <input id="full_name" name="full_name" placeholder="john doe" value="john doe" />
+          </div>
+          <div>
+            <label for="dob">DOB (ddmmyyyy)</label>
+            <input id="dob" name="dob" placeholder="17091999" value="17091999" />
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" placeholder="john@xyz.com" value="john@xyz.com" />
+          </div>
+          <div>
+            <label for="roll">Roll Number</label>
+            <input id="roll" name="roll" placeholder="ABCD123" value="ABCD123" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" id="btnA">Load Example A</button>
+          <button type="button" id="btnB">Load Example B</button>
+          <button type="button" id="btnC">Load Example C</button>
+          <button type="submit" id="send">Send</button>
+        </div>
+      </form>
+    </div>
+
+    <h2>Response</h2>
+    <div class="card">
+      <pre id="out">(waiting)</pre>
+      <small class="muted">Tip: If you see a JSON error, ensure your quotes are plain straight quotes, not “smart quotes”.</small>
+    </div>
+
+    <script>
+      const $ = (s) => document.querySelector(s);
+      const out = $('#out');
+      const form = $('#bfhlForm');
+      const setData = (arr) => { $('#data').value = JSON.stringify(arr); };
+
+      $('#btnA').addEventListener('click', () => setData(["a","1","334","4","R","$"]));
+      $('#btnB').addEventListener('click', () => setData(["2","a","y","4","&","-","*","5","92","b"]));
+      $('#btnC').addEventListener('click', () => setData(["A","ABcD","DOE"]));
+
+      function parseDataField(raw) {
+        raw = raw.trim();
+        if (!raw) return [];
+        try {
+          if (raw.startsWith('[')) {
+            const arr = JSON.parse(raw);
+            return Array.isArray(arr) ? arr.map(String) : [];
+          }
+        } catch (e) {
+          // fall back to CSV parse
+        }
+        return raw.split(/[,\n\s]+/).map(s => s.trim()).filter(Boolean);
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        out.textContent = 'Sending...';
+
+        const data = parseDataField($('#data').value);
+        const body = {
+          data,
+          full_name: $('#full_name').value || undefined,
+          dob_ddmmyyyy: $('#dob').value || undefined,
+          email: $('#email').value || undefined,
+          roll_number: $('#roll').value || undefined,
+        };
+
+        try {
+          const res = await fetch('/bfhl', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          const json = await res.json();
+          out.textContent = JSON.stringify(json, null, 2);
+        } catch (err) {
+          out.textContent = 'Request failed: ' + (err?.message || err);
+        }
+      });
+    </script>
+  </body>
+  </html>
