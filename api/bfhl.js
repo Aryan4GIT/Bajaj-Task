@@ -10,6 +10,22 @@ function alternatingCapsReverse(s) {
 function handler(req, res) {
   //  only POST as per requirements
   if (req.method !== 'POST') {
+    // For browsers hitting GET /bfhl, return a friendly JSON instead of a 404/405.
+    if (req.method === 'GET') {
+      const email = (process.env.BFHL_EMAIL || 'john@xyz.com').toString();
+      const rollNumber = (process.env.BFHL_ROLL || 'ABCD123').toString();
+      const fullName = (process.env.BFHL_FULL_NAME || 'john doe').toString();
+      const dob = (process.env.BFHL_DOB || '17091999').toString();
+      const user_id = `${fullName.trim().toLowerCase().replace(/\s+/g, '_')}_${dob}`;
+      return res.status(200).json({
+        is_success: true,
+        message: 'BFHL API is up. Send a POST to this same /bfhl endpoint with JSON { "data": [ ... ] }.',
+        user_id,
+        email,
+        roll_number: rollNumber,
+        example_request: { data: ['a','1','334','4','R','$'] }
+      });
+    }
     return res.status(405).json({ is_success: false, message: 'Method Not Allowed' });
   }
 
