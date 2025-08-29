@@ -53,6 +53,12 @@ vercel
 vercel --prod
 ```
 
+## Frontend
+
+- A simple static frontend (index.html) is included at the repo root.
+- It is deployed and reachable at: https://bajaj-task-bfhl.vercel.app/
+- The page lets you send requests to POST /bfhl and view the JSON response.
+
 ## Notes
 - Only integers are treated as numbers; strings like `12.5` are not.
 - Special characters are extracted from tokens that contain them.
