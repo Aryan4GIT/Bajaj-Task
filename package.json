@@ -1,0 +1,19 @@
+{
+  "name": "bfhl-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "node server.js",
+  "test": "node --test test.mjs",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+  "@vercel/node": "^3.2.25",
+  "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  }
+}
