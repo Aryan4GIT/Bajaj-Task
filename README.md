@@ -42,7 +42,7 @@ npm i -g vercel
 npm i
 vercel dev
 ```
-
+Use Postman or ThunderClient for testing the API
 POST to https://bajaj-task-bfhl.vercel.app/bfhl
 
 ## Deploy on Vercel
