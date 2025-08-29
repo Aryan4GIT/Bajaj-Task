@@ -43,7 +43,7 @@ npm i
 vercel dev
 ```
 
-POST to http://localhost:3000/bfhl
+POST to https://bajaj-task-bfhl.vercel.app/bfhl
 
 ## Deploy on Vercel
 
